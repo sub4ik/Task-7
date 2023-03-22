@@ -20,6 +20,9 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "email")
+    private String email;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = {@JoinColumn(name = "user_id")},
@@ -31,6 +34,7 @@ public class User implements UserDetails {
         return roles;
     }
 
+    @Override
     public String getPassword() {
         return this.password;
     }
@@ -70,6 +74,7 @@ public class User implements UserDetails {
     public User(String name, String email, String password) {
         this.name = name;
         this.password = password;
+        this.email = email;
     }
 
     public Long getId() {
@@ -88,6 +93,14 @@ public class User implements UserDetails {
         this.name = name;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public Set<Role> getRoles() {
         return roles;
     }
@@ -101,7 +114,7 @@ public class User implements UserDetails {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
                 ", roles=" + roles +
                 '}';
     }

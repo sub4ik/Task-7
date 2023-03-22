@@ -1,19 +1,37 @@
 package ru.itmentor.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.itmentor.spring.boot_security.demo.model.User;
 import ru.itmentor.spring.boot_security.demo.service.UserService;
 
-@Controller
-@RequestMapping("/users")
-public class UserController {
-    @Autowired
-    private UserService userService;
+import javax.servlet.http.HttpSession;
 
-    @GetMapping
+@Controller
+@RequestMapping("/user")
+public class UserController {
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/info")
+    public String showUserInfo(Model model, @AuthenticationPrincipal User user){
+        if (user != null){
+            model.addAttribute("user", user);
+        } else return "auth/login";
+        return "user/info";
+    }
+
+    /*@GetMapping
     public String getAllUsers(Model model) {
         model.addAttribute("users", userService.getUsers());
         return "userList";
@@ -57,5 +75,5 @@ public class UserController {
         User user = userService.read(id);
         userService.delete(user);
         return "redirect:/users";
-    }
+    }*/
 }

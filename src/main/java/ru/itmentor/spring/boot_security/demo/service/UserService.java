@@ -1,6 +1,8 @@
 package ru.itmentor.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.itmentor.spring.boot_security.demo.model.User;
 import ru.itmentor.spring.boot_security.demo.repository.UserRepository;
@@ -26,18 +28,37 @@ public class UserService {
     }
 
     public void create(User user) {
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     public User read(Long id) {
-        return userRepository.findById(id).get();
+        return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User with " + id + " not found"));
     }
 
-    public void update(User user) {
-        userRepository.save(user);
+    public void updateUser(User user) {
+        Optional<User> optionalUser = userRepository.findById(user.getId());
+        if (optionalUser.isPresent()) {
+            User dbUser = optionalUser.get();
+            dbUser.setName(user.getName());
+            dbUser.setEmail(user.getEmail());
+            dbUser.setPassword(user.getPassword());
+            dbUser.setRoles(user.getRoles());
+            userRepository.save(dbUser);
+        } else {
+            // handle the case where the user is not found
+        }
     }
+
+
+//    public void update(User user) {
+//        userRepository.updateUser(user);
+//    }
 
     public void delete(User user) {
         userRepository.delete(user);
+    }
+    public void deleteById(Long id) {
+        userRepository.deleteUserById(id);
     }
 }

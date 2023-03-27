@@ -1,0 +1,64 @@
+<div id="userDeleteForm" th:fragment="userDeleteFormFragment">
+    <div class="modal fade" th:id="'userDelete' + ${user.id}" tabindex="-1" aria-labelledby="userDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userDeleteModalLabel">edit user</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/admin/delete}" th:object="${user}" method="post">
+                        <input type="hidden" name="id" th:value="${user.id}"/>
+                        <fieldset disabled>
+                            <div class="row justify-content-center">
+                                <div class="form-group" style="text-align: center;">
+                                    <label for="editId">ID</label>
+                                    <input type="text" class="form-control"
+                                           id="editId"
+                                           th:name="id"
+                                           th:value="${user.id}">
+                                    <input type="hidden" th:name="id"
+                                           th:value="${user.id}"/>
+                                </div>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="form-group" style="text-align: center;">
+                                    <label for="editName">Name</label>
+                                    <input type="text" th:name="name"
+                                           th:value="${user.name}" id="editName"
+                                           class="form-control" required>
+                                </div>
+                            </div>
+                            <!-- email-->
+                            <div class="row justify-content-center">
+                                <div class="form-group" style="text-align: center;">
+                                    <label for="editEmail">Email</label>
+                                    <input type="text" th:name="email"
+                                           th:value="${user.email}" id="editEmail"
+                                           class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="form-group" style="text-align: center;">
+                                    <br>
+                                    <label for="roles">Roles:</label>
+                                    <select multiple name="roleIds" id="roles">
+                                        <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}" th:selected="${user.roles.contains(role)}"></option>
+                                    </select>
+<!--                                    <a th:each="role : ${user.roles}" th:text="${role.name} + ' '"> </a>-->
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">close
+                            </button>
+                            <button type="submit" class="btn btn-primary">delete
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

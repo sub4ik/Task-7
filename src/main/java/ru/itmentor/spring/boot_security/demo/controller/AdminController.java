@@ -12,10 +12,7 @@ import ru.itmentor.spring.boot_security.demo.service.RegistrationService;
 import ru.itmentor.spring.boot_security.demo.service.RoleService;
 import ru.itmentor.spring.boot_security.demo.service.UserService;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Controller
 @RequestMapping("/admin")
@@ -34,27 +31,39 @@ public class AdminController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @GetMapping("")
+    /*@GetMapping("")
     public String showUserList(Model model) {
         List<User> users = userService.getUsers();
         model.addAttribute("users", users);
         return "admin/userList";
+    }*/
+    @GetMapping("")
+    public String showUserList(Model model) {
+        List<User> users = userService.getUsers();
+        List<Role> roles = roleService.getAllRoles();
+        User createUser = new User();
+        model.addAttribute(createUser);
+        model.addAttribute("roles", roles);
+        model.addAttribute("users", users);
+        return "admin/adminPage";
     }
 
     @GetMapping("/create")
     public String showCreateUserForm(Model model) {
         User user = new User();
         List<Role> roles = roleService.getAllRoles();
-        model.addAttribute("user", user);
         model.addAttribute("roles", roles);
+        model.addAttribute("user", user);
         return "admin/createUserForm";
     }
 
     @PostMapping("/create")
-    public String createUser(@ModelAttribute("user") User user, BindingResult result) {
-        if (result.hasErrors()) {
+    public String createUser(@ModelAttribute("user") User user, BindingResult result,
+                             @RequestParam(value = "roleIds", required = false) List<Long> roleIds) {
+        if (result.hasErrors() || roleIds == null || roleIds.isEmpty()) {
             return "admin/createUserForm";
         }
+        user.setRoles(roleService.getRolesByIds(roleIds));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.create(user);
         return "redirect:/admin";
@@ -80,6 +89,17 @@ public class AdminController {
         userService.updateUser(user);
         return "redirect:/admin";
     }
+    /*@PostMapping("/edit")
+    public String updateUser(@ModelAttribute("user") User user, BindingResult result,
+                             @RequestParam(value = "roleIds", required = false) List<Long> roleIds) {
+        if (result.hasErrors() || roleIds == null || roleIds.isEmpty()) {
+            return "admin/editUserForm";
+        }
+        user.setRoles(roleService.getRolesByIds(roleIds));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userService.updateUser(user);
+        return "redirect:/admin";
+    }*/
 
     @PostMapping("/delete")
     public String deleteUser(@RequestParam("id") Long id) {
